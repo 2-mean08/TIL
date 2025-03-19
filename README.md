@@ -12,7 +12,7 @@ https://docs.google.com/presentation/d/1aXllAnu3ZwwrJS9AMnVU6ud_vTI0keaCIOBQn-QE
 - String: 문자열 
 - bool: 참 또는 거짓
 
-# 2.변수
+# 2.변수형
 - 변수 선언 시 var타입 사용 가능
 
 # 3.상수
@@ -24,4 +24,43 @@ https://docs.google.com/presentation/d/1aXllAnu3ZwwrJS9AMnVU6ud_vTI0keaCIOBQn-QE
 - ~/ : 몫 (int형으로 반환)
 - % : 나머지 (int형으로 반환)
 
+# 5.증감 연산자
+- 후위 연산: x++,x--
+- 전위 연산: ++x,--x
+
+# 6.비교 연산자
+- '=='
+- '!='
+- '>'
+- '<'
+- '>='
+- '<='
+- 연산 결과: bool형
+
+# 7.논리 연산자
+- && (and)
+- || (or)
+- ! (not)
+
+# 8.타입 검사
+- is: 같은 타입이면 true, 아니면 false
+- is!: 같은 타입이면 false, 아니면 true
+
+# 9.형변환 - as
+- var c = 30.5; //double타입
+- int d = c as int; //오류 발생, double -> int는 불가능
+
+# 10.함수
+- 특별한 기능을 하는 코드 묶음. 코드를 함수로 묶는 것 = 모듈화
+- 함수: 모든 지역에서 접근 가능함
+- 메서드: 클래스 안에서만 접근 가능하거나 인스턴스를 통해서만 접근 가능함
+- 익명 함수: 함수 코드를 변수 값처럼 취급해 변수에 담을 수 있도록 함 //이름 없는 함수라서 호출하려면 이름이 부여되어야함
+- 람다식: 단순한 함수 코드일 경우 간단하게 표현 //(number) => number%2==0
+- 선택 매개변수: 선택적으로 함수에 전달하고자 하는 매개변수 //함수 선언({매개변수})
+
+# 11.분기와 반복
+- if else
+- 삼항 연산자
+- switch case
+- for
 
