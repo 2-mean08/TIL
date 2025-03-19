@@ -64,3 +64,12 @@ https://docs.google.com/presentation/d/1aXllAnu3ZwwrJS9AMnVU6ud_vTI0keaCIOBQn-QE
 - switch case
 - for
 
+## 구구단 출력하기
+void main() {
+    for (var i = 2; i < 10; i++) {
+        for (var j = 1; j < 10; j++){
+            print("$i * $j = " + "${i * j}");
+        }
+    print("");
+    }
+}
