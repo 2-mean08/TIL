@@ -1,0 +1,18 @@
+//5x5 크기의 사각형 만들기
+void main() {
+  var n = 5; //크기 설정 변수
+  var result = "";
+  for(var y = 0; y < n; y++){ //세로 선 그리기
+    for(var x = 0; x < n; x++){ //가로 선 그리기
+      var c = 
+        y == 0 || y == n - 1 || x == 0 || x == n - 1; //현재 위치가 모서리인지 확인
+      if(c){
+        result += "=";
+      }else{
+        result += " ";
+      }
+    }
+    result += "\n";
+  }
+  print(result);
+}
