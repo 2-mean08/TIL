@@ -1,0 +1,152 @@
+''' 단순연결리스트를 이용한 객체지향 전화번호부 자료관리.
+- 단순연결리스트 클래스에 노드 클래스를 삽입
+- 이름 중복 체크
+- 이름순으로 연결리스트에 저장
+- 25.04.02
+- 2020136024 이재민
+- 프로그램에 주석 달기
+'''
+
+# 전화번호부를 관리하는 클래스 (연결 리스트)
+class PhoneBook:
+# 연결 리스트의 노드 클래스
+    class Node:
+        def __init__(self, data):
+            self.data = data    # 데이터 저장: [이름, 전화번호] 형태의 리스트
+            self.next = None    # 다음 노드 포인터
+
+    def __init__(self):
+        self.head = None  # 연결 리스트의 시작 노드
+
+    # 연락처 삽입 메서드 (알파벳 순 정렬 유지)
+    def insertNode(self, add_data):                    
+        if self.head == None:  # 시작 노드가 빈 연결리스트인 경우
+            self.head = self.Node(add_data) # head가 새로운 데이터를 가리킴
+            print("신규입력 완료\n")
+            return
+    
+        current = self.head # 현재 head를 저장
+        prev = None
+        # 알파벳 순 탐색 루프
+        while current: # 노드가 있을때까지    
+            if current.data[0] == add_data[0]:  # 현재 노드와 새로운 데이터 중복 확인
+                print("이미 있는 이름입니다\n")
+                return
+            elif current.data[0] > add_data[0]:  # 새로운 데이터 위치 확인
+                break
+            prev = current # prev에 현재 데이터  삽입
+            current = current.next  # 다음 노드 이동
+        
+        new_node = self.Node(add_data)  # 새 노드 생성
+        
+        if not prev:  # prev가 없다면
+            new_node.next = self.head # 새로운 노드 다음 자리에 현재 head 삽입
+            self.head = new_node #head에 새로운 노드 삽입
+        else:
+            prev.next = new_node #prev 다음 자리에 새로운 노드 삽입(new_node == add_data, prev.next == current)
+            new_node.next = current # current 앞 자리에 add_data를 한 것
+        print("신규입력 완료\n")
+
+    # 연락처 수정 메서드    
+    def changeNode(self, change_name):
+        current = self.head # 제일 앞자리 삽입
+        while current:
+            if current.data[0] == change_name:  # 이름 탐색 성공
+                print("\n{}전화번호는 {}입니다.".format(current.data[0], current.data[1]))
+                current.data[1] = input("변경할 전화번호:")  # 번호 업데이트
+                print("\n{}의 전화번호가 {}으로 수정되었습니다.".format(current.data[0], current.data[1]))
+                return
+            current = current.next  # 다음 노드 이동
+        print("없는 이름입니다\n")
+
+    # 전체 연락처 출력 메서드
+    def printNodes(self): 
+        current = self.head # 제일 앞자리 삽입
+        if current == None:  # 빈 리스트 체크
+            print("저장된 연락처가 없습니다")
+            return 
+        while current != None:  # 비어있지 않은 경우 반복
+            print(f"{current.data[0]}: {current.data[1]}", end=' | ')
+            current = current.next # 다음 노드 이동
+        print('\n')
+
+    # 연락처 삭제 메서드    
+    def deleteNode(self, delete_name):
+        if self.head == None:  # 빈 리스트 체크
+            print("연결리스트가 비어 있습니다\n")
+            return
+        
+        current = self.head
+        prev = None
+        while current:
+            if current.data[0] == delete_name:  # 삭제 대상 발견
+                if not prev:  # 첫 번째 노드 삭제
+                    self.head = current.next
+                else:  # 중간/마지막 노드 삭제
+                    prev.next = current.next
+                del current  # 메모리 해제
+                print("연락처가 삭제되었습니다\n")
+                return
+            prev = current
+            current = current.next  # 다음 노드 이동
+        print("없는 이름 입니다\n")
+
+    # 연락처 검색 메서드
+    def findNode(self, find_name):
+        if self.head == None:  # 빈 리스트 체크
+            print("빈 리스트입니다")
+            return None
+        
+        current = self.head
+        while current:
+            if current.data[0] == find_name:  # 이름 발견
+                print('\n{}님의 전화번호는 {} 입니다.'.format(current.data[0], current.data[1]))
+                return current
+            elif current.data[0] > find_name:  # 조기 종료 조건
+                break
+            current = current.next  # 다음 노드 이동
+        print("없는 이름입니다\n")
+        return None
+
+# 메인 프로그램 실행 블록
+if __name__=="__main__":
+    print('단순연결리스트를 이용한 전화번호부 관리 프로그램입니다.\n')
+    P = PhoneBook()  # PhoneBook 인스턴스 생성
+
+    while True:
+        print('\n[기능 선택] 1:입력 | 2:수정 | 3:삭제 | 4:탐색 | 0:종료')
+        ch = input("선택 → ")
+            
+        if ch == '0':  # 프로그램 종료
+            print('\n최종 연락처 목록:')
+            P.printNodes()
+            print('프로그램을 종료합니다.')
+            break
+
+        elif ch == '1':  # 연락처 추가
+            add_data = [
+                input('이름: ').strip(),  # 사용자 입력 처리
+                input('전화번호: ').strip()
+            ]
+            P.insertNode(add_data) 
+            P.printNodes()  # 추가 후 목록 출력
+            
+        elif ch == '2':  # 연락처 수정
+            name = input('수정할 이름: ').strip()
+            P.changeNode(name)  
+            P.printNodes()
+
+        elif ch == '3':  # 연락처 삭제
+            name = input('삭제할 이름: ').strip()
+            P.deleteNode(name)                            
+            P.printNodes()
+            
+        elif ch == '4':  # 연락처 검색
+            name = input('검색할 이름: ').strip()
+            P.findNode(name)
+            
+        else:  # 잘못된 입력 처리
+            print('\n⚠️ 0~4 사이의 숫자만 입력해주세요!\n')
+
+
+    
