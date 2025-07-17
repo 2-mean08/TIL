@@ -1,0 +1,92 @@
+## 1\. GPS 기반 현재 위치 반영하기
+
+웹에서 사용자의 현재 위치를 얻기 위해서는 `Geolocation API`를 사용합니다.
+
+### 1.1 Geolocation API 사용
+
+`Geolocation API`를 사용하여 위치 정보 접근 권한을 요청하고 현재 위치 정보를 받아올 수 있습니다.
+
+  * `navigator.geolocation.getCurrentPosition()` 메서드를 사용합니다. 이 메서드는 `position` 객체를 인자로 받으며, 이 객체 안에 위도(`latitude`), 경도(`longitude`) 등 좌표 정보가 포함되어 있습니다.
+  * **주의**: 최신 브라우저에서는 **HTTPS 프로토콜에서만 동작**합니다.
+
+### 1.2 React 컴포넌트에 적용
+
+사용자의 현재 위치를 가져와 Naver 지도에 반영하는 React 컴포넌트 예시입니다.
+
+#### `Home.jsx`
+
+이 컴포넌트는 `MapHook`을 사용하여 지도와 현재 위치 정보를 가져오고 화면에 지도를 렌더링합니다.
+
+```jsx
+import React from 'react';
+import MapHook from '/src/hooks/MapHook.js';
+
+const Home = () => {
+  // MapHook에서 반환하는 mapRef와 myLocation을 구조 분해 할당으로 가져옵니다.
+  const { mapRef, myLocation } = MapHook();
+
+  return (
+    <>
+      {/* 지도가 렌더링될 div 요소입니다. ref를 통해 MapHook에서 접근할 수 있도록 합니다. */}
+      <div style={{ width: "1000px", height: "400px", margin: "0", padding: "0" }}>
+        <div ref={mapRef} style={{ width: "100%", height: "400px", margin: "0", padding: "0" }}></div>
+      </div>
+    </>
+  );
+};
+
+export default Home;
+```
+
+#### `MapHook.js`
+
+이 커스텀 훅은 Geolocation API를 사용하여 현재 위치를 가져오고, Naver Map API를 이용하여 지도를 초기화합니다.
+
+```jsx
+import { useState, useEffect, useRef } from 'react';
+
+const MapHook = () => {
+  // 맵 인스턴스를 참조할 useRef 훅을 사용합니다.
+  const mapRef = useRef(null);
+  // 1. 위치 정보를 저장할 state를 추가합니다. 초기값은 null입니다.
+  const [myLocation, setMyLocation] = useState(null);
+
+  useEffect(() => {
+    // 2. Geolocation API를 호출하여 현재 위치를 가져옵니다.
+    navigator.geolocation.getCurrentPosition(
+      // 성공 시 콜백 함수
+      (position) => {
+        const lat = position.coords.latitude; // 위도
+        const lng = position.coords.longitude; // 경도
+        // 3. naver.maps.LatLng 객체를 생성한 후 myLocation state를 업데이트합니다.
+        setMyLocation(new window.naver.maps.LatLng(lat, lng));
+      },
+      // 실패 시 콜백 함수
+      () => {
+        console.error("현재 위치를 가져올 수 없습니다.");
+        // 4. 위치 정보를 가져오는 데 실패하면 기본 위치(서울)로 설정합니다.
+        setMyLocation(new window.naver.maps.LatLng(37.3595704, 127.105399));
+      }
+    );
+  }, []); // 빈 배열은 컴포넌트가 처음 마운트될 때 한 번만 실행되도록 합니다.
+
+  useEffect(() => {
+    // 맵 객체가 이미 생성되었는지 확인하여 중복 생성을 방지합니다.
+    // window.naver, window.naver.maps 객체가 로드되었고, myLocation이 설정되었으며, mapRef.current가 존재하는지 확인합니다.
+    if (window.naver && window.naver.maps && myLocation && mapRef.current) {
+      // mapRef.current에 __naver_map 속성이 없으면 지도를 생성합니다.
+      if (!mapRef.current.__naver_map) {
+        mapRef.current.__naver_map = new window.naver.maps.Map(mapRef.current, {
+          center: myLocation, // 지도의 중심을 현재 위치(myLocation state)로 설정합니다.
+          zoom: 10, // 초기 줌 레벨을 설정합니다.
+        });
+      }
+    }
+  }, [myLocation]); // myLocation state가 변경될 때마다 이 useEffect가 실행됩니다.
+
+  // mapRef와 myLocation state를 반환하여 외부 컴포넌트에서 사용할 수 있도록 합니다.
+  return { mapRef, myLocation };
+};
+
+export default MapHook;
+```
